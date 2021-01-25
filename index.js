@@ -71,8 +71,8 @@ Click 'Submit' to create a screenshot of the <a href="https://platform.sh/">Plat
 
 // Define PDF result route
 app.get('/pdfs/result', async function(req, res){
-  // Create a randomly generated ID number for the current PDF
-  var pdfID = uuidv4();
+  // Get URL parameter or create a randomly generated ID number for the current PDF
+  var pdfID = (req.query['pdfID']) ? req.query['pdfID'] : uuidv4();
   // Generate the PDF
   await pdfs.makePDF(req.query['pdfURL'], pdfID)
   // Define and download the file
@@ -82,8 +82,8 @@ app.get('/pdfs/result', async function(req, res){
 
 // Define Screenshots result route
 app.get('/screenshots/result', async function(req, res){
-  // Create a randomly generated ID number for the current screenshot
-  var screenshotID = uuidv4();
+  // Get URL parameter or create a randomly generated ID number for the current screenshot
+  var screenshotID = (req.query['screenshotID']) ? req.query['screenshotID'] : uuidv4();
   // Generate the screenshot
   await screenshots.takeScreenshot(req.query['screenshotURL'], screenshotID, req.query['emulateMobile'])
   // Define and download the file
