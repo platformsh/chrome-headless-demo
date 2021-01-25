@@ -13,6 +13,10 @@ crons:
 web:
   commands:
     start: "node index.js"
+  locations:
+    "/screenshots":
+        root: "screenshots"
+        scripts: false
 
 mounts:
   "/pdfs": "shared:files/pdfs"
