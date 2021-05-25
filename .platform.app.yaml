@@ -13,9 +13,17 @@ crons:
 web:
   commands:
     start: "node index.js"
+  locations:
+    "/screenshots":
+        root: "screenshots"
+        scripts: false
+    "/diff":
+        root: "diff"
+        scripts: false
 
 mounts:
   "/pdfs": "shared:files/pdfs"
   "/screenshots": "shared:files/screenshots"
+  "/diff": "shared:files/diff"
 
 disk: 512
