@@ -3,6 +3,8 @@ const uuidv4 = require('uuid/v4')
 const express = require('express');
 const rateLimit = require("express-rate-limit");
 const platformsh = require('platformsh-config');
+const PNG = require('pngjs').PNG;
+const pixelmatch = require('pixelmatch');
 
 // Require local examples
 var pdfs = require("./examples/pdfs.js");
@@ -89,6 +91,30 @@ app.get('/screenshots/result', async function(req, res){
   // Define and download the file
   const file = `screenshots/${screenshotID}.png`;
   res.download(file);
+});
+
+// Define Compare result route
+app.get('/compare/result', async function(req, res){
+  // Compare the two screenshots.
+  try {
+    const img1 = PNG.sync.read(fs.readFileSync(`./screenshots/${req.query['img1']}.png`));
+    const img2 = PNG.sync.read(fs.readFileSync(`./screenshots/${req.query['img2']}.png`));
+
+    const {width, height} = img1;
+    const diff = new PNG({width, height});
+    const difference = pixelmatch(img1.data, img2.data, diff.data, width, height, {threshold: 0.1});
+
+    const compatibility = 100 - diff * 100 / (width * height);
+    console.log(`${difference} pixels differents`);
+    //console.log(`Compatibility: ${compatibility}%`);
+
+    // Store and return the diff image.
+    fs.writeFileSync(`./diff/${req.query['img1']}-diff.png`, PNG.sync.write(diff));
+    const file = `./diff/${req.query['img1']}-diff.png`;
+    res.download(file);
+    } catch (e) {
+    return console.error(e);
+  }
 });
 
 // PDFs source
